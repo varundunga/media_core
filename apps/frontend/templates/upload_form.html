@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Upload File{% endblock %}
+{% block content %}
+<h2>Upload File</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <img id="preview" src="#" alt="Image preview" style="display:none; max-width: 200px; max-height: 200px margin-top:10px;">
+        <button type="submit">Upload</button>
+    </form>
+    <script src="{%static 'js/image_preview.js' %}"></script>
+
+{% endblock %}

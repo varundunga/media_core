@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Media Core{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block head %}{% endblock %}
+  </head>
+  <body class="container">
+    <h1 style="margin: 0">Media Core</h1>
+    <header class="header-flex">
+      {% if user.is_authenticated %}
+      <span>Logged in as: {{ user.username }} ({{ user.email }})</span>
+      {% if request.path != '/frontend/dashboard/' %}
+      <nav class="nav-links">
+        <a href="{% url 'user_dashboard' %}">Dashboard</a>
+      </nav>
+      {% endif %}
+      <div class="logout-link">
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
+      {% else %}
+      <nav class="nav-links">
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'register' %}">Register</a>
+      </nav>
+      {% endif %}
+    </header>
+    <main>{% block content %}{% endblock %}</main>
+    <footer>
+      <p>&copy; 2025 Media Core</p>
+    </footer>
+  </body>
+</html>

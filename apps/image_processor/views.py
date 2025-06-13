@@ -1,19 +1,25 @@
+import logging
 from django.shortcuts import render
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework import permissions, parsers, status, viewsets
+
 
 from celery.result import AsyncResult
 
-from .serializers import ImageSerializer
+from .serializers import ImageSerializer, UploadImageSerializer
+from .models import UploadImage
 from .tasks import generate_thumbnail
 from media_core import celery_app
 
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 @api_view(["POST"])
 def process_image(request):
+    logger.warning(request.body)
     serializer = ImageSerializer(data=request.data)
     if serializer.is_valid():
         instance = serializer.save()
@@ -33,6 +39,16 @@ def process_image(request):
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ImageUploadViewSet(viewsets.ModelViewSet):
+    queryset = UploadImage.objects.all()
+    serializer_class = UploadImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 @api_view(["GET"])
 def get_task_status(request, task_id):

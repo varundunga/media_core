@@ -25,8 +25,13 @@ SECRET_KEY = 'django-insecure-g-7hykftt!_vw#*v69^oc*wozdf+v5u+)f#2h%y=ad8xu@1r4q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+LOGIN_URL = "/frontend/login/"
 
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "mediacore",
+]
 
 # Application definition
 
@@ -39,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',   
     'apps.image_processor',
+    'apps.frontend'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'media_core.middleware.RequestResponseLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'media_core.urls'
@@ -56,7 +63,7 @@ ROOT_URLCONF = 'media_core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,7 +128,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -146,6 +157,45 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 
 # MinIO settings
-MINIO_HOST=os.getenv("MINIO_HOST", "localhost:9000")
+MINIO_HOST=os.getenv("MINIO_HOST", "localhost")
+MINIO_PORT=os.getenv("MINIO_PORT", "9000")
 MINIO_ACCESS_KEY=os.environ["MINIO_ROOT_USER"]
 MINIO_SECRET_KEY=os.environ["MINIO_ROOT_PASSWORD"]
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': True,
+#     'formatters': {
+#         'verbose': {
+#             'format': '[{asctime}] {levelname} {name} {message}',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '{levelname} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'verbose',
+#         },
+#         'file': {
+#             'class': 'logging.FileHandler',
+#             'filename': BASE_DIR / 'django.log',
+#             'formatter': 'verbose',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console', 'file'],
+#         'level': 'INFO',
+#     },
+#     'loggers': {
+#         'media_core.middleware': {
+#             'handlers': ['console', 'file'],
+#             'level': 'INFO',
+#             'propagate': False,
+#         },
+#         # Add other app-specific loggers here if needed
+#     },
+# }

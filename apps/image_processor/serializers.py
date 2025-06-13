@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ImageModel, ImageProcessingResults
+from .models import ImageModel, ImageProcessingResults, UploadImage
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,3 +14,9 @@ class ImageProcessingResultSerializer(serializers.ModelSerializer):
         model = ImageProcessingResults
         fields = '__all__'
 
+class UploadImageSerializer(serializers.ModelSerializer):
+    file = serializers.FileField()
+    class Meta:
+        model = UploadImage
+        fields = ['file']
+        
